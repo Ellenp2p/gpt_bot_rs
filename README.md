@@ -1,21 +1,23 @@
-# DeepSeek/Open AI Telegram Bot
+# DeepSeek AI Telegram Bot
 
 一个功能强大的Telegram AI助手机器人，支持文本对话和语音识别功能，基于OpenAI API构建。
 
 ## 主要特性
 
-- 💬 **智能对话**: 基于GPT-3.5 Turbo的自然语言交流
+- 💬 **智能对话**: 基于GPT-4o-mini的自然语言交流
 - 🎤 **语音识别**: 支持语音消息转录并回复
 - 📝 **会话记忆**: 保存对话历史，实现上下文连贯的交流
 - 🔄 **多数据库支持**: 兼容SQLite和PostgreSQL
 - 🧹 **清除历史**: 随时清除历史对话记录
+- 🔒 **白名单管理**: 控制用户访问权限，仅允许授权用户使用机器人
+- 👮 **管理员系统**: 支持多级管理权限，超级管理员可添加普通管理员
 
 ## 技术栈
 
 - Rust + Tokio (异步运行时)
 - Teloxide (Telegram Bot API框架)
 - SQLx (数据库ORM)
-- OpenAI API (GPT-3.5和Whisper)
+- OpenAI API (GPT-4o-mini和Whisper)
 
 ## 安装指南
 
@@ -32,8 +34,8 @@
 1. 克隆代码库：
 
 ```bash
-git clone https://github.com/Ellenp2p/gpt_bot_rs.git
-cd gpt_bot_rs
+git clone https://github.com/yourusername/deepseek_ai_test.git
+cd deepseek_ai_test
 ```
 
 2. 创建并配置环境变量文件：
@@ -47,7 +49,7 @@ cp .env.example .env
 
 ```bash
 cargo build --release
-./target/release/gpt_bot_rs
+./target/release/deepseek_ai_test
 ```
 
 ## 环境变量配置
@@ -60,9 +62,13 @@ TELEGRAM_BOT_TOKEN=your_telegram_bot_token_here
 OPENAI_API_KEY=your_openai_api_key_here
 
 # 数据库配置 (默认为SQLite)
-DATABASE_URL=sqlite:chat_database.db?mode=rwc
+DATABASE_URL=sqlite:chat_database.db
 # 或者使用PostgreSQL
 # DATABASE_URL=postgres://username:password@localhost/dbname
+
+# 管理员配置
+# 可以配置多个管理员ID，用逗号分隔
+ADMIN_USER_IDS=12345678,87654321,98765432
 ```
 
 ## 支持的命令
@@ -73,6 +79,11 @@ DATABASE_URL=sqlite:chat_database.db?mode=rwc
 - `/help` - 显示帮助信息
 - `/ping` - 测试机器人是否在线
 - `/clear` - 清除聊天历史记录
+- `/adduser` - 添加用户到白名单（仅管理员可用）
+- `/removeuser` - 从白名单移除用户（仅管理员可用）
+- `/listusers` - 列出所有白名单用户（仅管理员可用）
+- `/addadmin` - 添加管理员（仅超级管理员可用）
+- `/listadmins` - 列出所有管理员（仅管理员可用）
 
 ## 使用方法
 
@@ -82,6 +93,27 @@ DATABASE_URL=sqlite:chat_database.db?mode=rwc
    - 直接发送文本消息进行对话
    - 发送语音消息，机器人会自动转录并回复
    - 使用 `/clear` 命令清除历史对话
+
+## 白名单和管理员系统
+
+机器人实现了两级权限系统：
+
+1. **超级管理员**：
+   - 在`.env`文件的`ADMIN_USER_IDS`变量中配置
+   - 可以添加/删除普通管理员
+   - 可以添加/删除白名单用户
+   - 不受白名单限制
+
+2. **普通管理员**：
+   - 由超级管理员通过`/addadmin`命令添加
+   - 可以添加/删除白名单用户
+   - 不受白名单限制
+
+3. **白名单用户**：
+   - 由管理员通过`/adduser`命令添加
+   - 可以使用机器人的所有对话功能
+
+未在白名单中的用户将无法使用机器人功能。
 
 ## 数据库结构
 

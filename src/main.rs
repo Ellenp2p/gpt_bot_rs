@@ -63,6 +63,11 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
 
     // 创建机器人
     let bot = Bot::new(tg_token);
+
+    // 设置机器人命令
+    setup_commands(&bot).await?;
+    log::info!("Bot commands have been set");
+
     let db_pool_clone = db_pool.clone();
     let openai_token_clone = openai_token.clone();
 
@@ -128,6 +133,13 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
         .dispatch()
         .await;
 
+    Ok(())
+}
+
+// 设置机器人命令列表
+async fn setup_commands(bot: &Bot) -> Result<(), Box<dyn Error + Send + Sync>> {
+    let commands = Command::bot_commands();
+    bot.set_my_commands(commands).await?;
     Ok(())
 }
 
